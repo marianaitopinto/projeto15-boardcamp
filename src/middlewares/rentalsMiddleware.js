@@ -18,20 +18,20 @@ export async function validateRental(req, res, next) {
     };
 
     try {
-        const gameExists = await db.query(`
-            SELECT id FROM games WHERE id=$1
+        const game = await db.query(`
+            SELECT * FROM games WHERE id=$1
         `, [rental.gameId]);
 
-        if (gameExists.rowCount === 0) {
+        if (game.rowCount === 0) {
             return res.sendStatus(400);
         };
 
-        const customerExists = await db.query(`
+        const customer = await db.query(`
             SELECT id FROM customers WHERE id=$1
         `, [rental.customerId]);
 
-        if (customerExists.rowCount === 0) {
-            console.log(customerExists.rows[0]);
+        if (customer.rowCount === 0) {
+            console.log(customer.rows[0]);
             return res.sendStatus(400);
         };
 
@@ -39,10 +39,10 @@ export async function validateRental(req, res, next) {
             SELECT * FROM rentals WHERE "gameId"=$1 AND "returnDate" is null
         `, [rental.gameId]);
 
-        const gameStock = gameExists.rows[0].stockTotal;
+        const gameStock = game.rows[0].stockTotal;
         const gameRentals = gameDetails.rowCount;
 
-        if (gameStock - gameRentals === 0) {
+              if (parseInt(gameStock) - parseInt(gameRentals) <= 0) {
             return res.sendStatus(400);
         };
 
