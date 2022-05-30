@@ -24,7 +24,7 @@ export async function validateNewCustomer(req, res, next) {
             return res.sendStatus(409);
         }
 
-        next;
+        next();
     } catch (error) {
         res.status(500).send(error);
     }

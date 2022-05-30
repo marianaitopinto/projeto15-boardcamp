@@ -1,31 +1,34 @@
 import db from "./../db.js";
 
 export async function listGames(req, res) {
-    const {name} = req.query;
+    const { name } = req.query;
 
     try {
-
-        if (name) {
-            const game = await db.query(`
-            SELECT games.*, categories.name as "categoryName"
-            FROM games
+        if (!name) {
+          const { rows: games } = await db.query(`
+            SELECT 
+              games.*, 
+              categories.name as "categoryName" 
+            FROM games 
+              JOIN categories ON games."categoryId"=categories.id
+          `);
+    
+          res.send(games);
+        } else {
+          const { rows: games } = await db.query(`
+            SELECT 
+              games.*, 
+              categories.name as "categoryName" 
+            FROM games 
+             JOIN categories ON games."categoryId"=categories.id 
             WHERE LOWER(games.name) LIKE LOWER($1)
-            JOIN categories ON games."categoryId" = categories.id;
-            `, [`${name}%`]);
-
-            return res.send(game.rows);
+          `, [`${name}%`]);
+    
+          res.send(games);
         }
-
-        const games = await db.query(`
-            SELECT games.*, categories.name as "categoryName"
-            FROM games
-            JOIN categories ON games."categoryId" = categories.id;
-        `)
-
-        return res.send(games.rows);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+      } catch (error) {
+        res.sendStatus(500);
+      }
 }
 
 export async function createGames(req, res) {
