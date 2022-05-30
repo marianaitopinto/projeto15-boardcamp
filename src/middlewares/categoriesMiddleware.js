@@ -14,7 +14,7 @@ export async function validateCategories(req, res, next) {
     if (categoryValidation.error) {
         const validationErrors = categoryValidation.error.details.map(detail => detail.message);
         console.log(`Validation errors: `, validationErrors);
-        return res.status(422).send(validationErrors);
+        return res.status(400).send(validationErrors);
     }
 
     try {

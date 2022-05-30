@@ -10,7 +10,7 @@ export async function validateGame(req, res, next) {
     if (gameValidation.error) {
         const validationErrors = gameValidation.error.details.map(detail => detail.message);
         console.log(`Validation errors: `, validationErrors);
-        return res.status(422).send(validationErrors);
+        return res.status(400).send(validationErrors);
     }
 
     if ((parseInt(game.stockTotal) <= 0) || (parseInt(game.pricePerDay) <= 0) || (game.name === "")) {
