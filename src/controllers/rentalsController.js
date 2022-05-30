@@ -125,9 +125,41 @@ export async function finalizeRental(req, res) {
         );
 
         res.sendStatus(200);
-        
+
     } catch (error) {
         console.log(error)
         res.status(500).send(error);
+    }
+}
+
+export async function deleteRental(req, res) {
+    const { id } = req.params;
+
+    try {
+        const { rows: rental } = await db.query(`
+          SELECT * 
+          FROM rentals 
+          WHERE id = $1`, [id]
+        );
+
+        if (rental.length === 0) {
+            return sendStatus(404);
+        }
+
+        if (rental[0].returnDate) {
+            return res.sendStatus(400)
+        };
+
+        await db.query(`
+            DELETE 
+            FROM rentals 
+            WHERE id=$1
+            `, [id]
+        );
+
+        res.sendStatus(200);
+
+    } catch (error) {
+        res.sendStatus(500);
     }
 }
