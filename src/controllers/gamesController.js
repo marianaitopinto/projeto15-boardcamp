@@ -12,7 +12,6 @@ export async function listGames(req, res) {
             WHERE LOWER(games.name) LIKE LOWER($1)
             JOIN categories ON games."categoryId" = categories.id;
             `, [`${name}%`]);
-            console.log(game + "-----------")
 
             return res.send(game.rows);
         }
