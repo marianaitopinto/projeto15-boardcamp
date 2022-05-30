@@ -21,7 +21,7 @@ export async function validateNewCustomer(req, res, next) {
         `, [customer.cpf]);
 
         if (checkCpfExists.rowCount > 0) {
-            return res.sendStatus(409);
+            return res.status(409).json({message: "cpf não disponível"});
         }
 
         next();
@@ -33,6 +33,7 @@ export async function validateNewCustomer(req, res, next) {
 export async function validateUpdateCustomer(req, res, next) {
     const { id } = req.params;
     const customer = req.body;
+    console.log(customer);
 
     const customerValidation = customerSchema.validate(customer, {abortEarly: false});
 
@@ -47,7 +48,7 @@ export async function validateUpdateCustomer(req, res, next) {
         `, [customer.cpf, id]);
 
         if (checkCpf.rowCount > 0 && checkCpf.rows[0].id != id) {
-            return res.sendStatus(409);
+            return res.status(409).json({message: "cpf não disponível"});
         }
 
         next();
